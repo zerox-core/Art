@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>对比滑块卡 · 滑动揭示两层文案 — 反转家教官网模块</title>
+<style>
+  :root{
+    --paper:#f6f2e9;          /* 页面底 · 浅米 */
+    --card:#f2ecdd;           /* 底层卡 · 米色（反转家教层） */
+    --white:#faf9f6;          /* 顶层卡 · 纸白（普通AI层） */
+    --line:rgba(74,66,50,.16);
+    --gold:#c8a45c;           /* 细金线 / 把手描边 */
+    --gold-deep:#8a6d2f;
+    --ink:#3d3527;            /* 米色层正文 */
+    --ink2:#666;              /* 白层正文 */
+    --red:#b83026;            /* 强调红 */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Noto Serif SC","Songti SC","SimSun",serif;
+    background:var(--paper);color:#2e2820;
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:56px 20px;
+  }
+  .mono{font-family:"JetBrains Mono",ui-monospace,"SF Mono",Consolas,monospace}
+
+  /* ---------- 标题 ---------- */
+  .hd{text-align:center;margin-bottom:40px}
+  .hd .en{font-size:11px;letter-spacing:.4em;color:#a09784;text-transform:uppercase}
+  .hd h1{font-size:clamp(24px,4vw,34px);font-weight:500;letter-spacing:2px;margin-top:14px;color:#2e2820}
+  .hd h1 em{font-style:normal;color:var(--red)}
+
+  /* ============================================================
+     对比滑块卡：
+     底层 .cmp-after 正常文档流、铺满整卡宽、决定卡片高度；
+     顶层 .cmp-before absolute 铺满整卡宽、clip-path 从左往右揭示；
+     中间 2px 渐隐细金线 + 36px 白底金边小圆把手（⇔）；
+     两层文字完全固定不动，只有揭示。
+     ============================================================ */
+  .cmp{position:relative;--x:50%;width:min(860px,94vw);
+    background:var(--card);border:1px solid var(--line);
+    border-radius:4px;overflow:hidden;
+    box-shadow:0 4px 24px rgba(46,40,32,.06)}
+  .cmp-drag .cmp-before,.cmp-drag .cmp-line{transition:none}
+
+  /* ---------- 底层 · 反转家教（米色） ---------- */
+  .cmp-after{position:relative;padding:40px 48px 34px}
+  .eyebrow{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+    font-size:10px;letter-spacing:.3em;color:#a07c33;margin-bottom:16px}
+  .cmp-after .lead{font-size:15px;color:#473f30;line-height:2;letter-spacing:.5px;max-width:640px;margin-bottom:22px}
+  .feat{list-style:none;max-width:640px}
+  .feat li{font-size:14px;color:#473f30;line-height:2.1;letter-spacing:.5px;
+    padding-left:18px;position:relative}
+  .feat li::before{content:"";position:absolute;left:0;top:.95em;width:7px;height:7px;
+    border-radius:50%;background:var(--gold)}
+  .feat b{font-weight:600;color:#3d3527}
+
+  /* ---------- 顶层 · 普通AI聊天（纸白） ---------- */
+  .cmp-before{position:absolute;inset:0;z-index:2;background:var(--white);
+    padding:40px 48px;display:flex;flex-direction:column;justify-content:center;
+    clip-path:inset(0 calc(100% - var(--x)) 0 0);
+    transition:clip-path .7s cubic-bezier(.22,1,.36,1)}
+  .cmp-before .core{font-size:15px;color:#333;line-height:2;letter-spacing:.5px;
+    max-width:600px;margin-bottom:20px}
+  .pain{list-style:none;max-width:600px}
+  .pain li{font-size:14px;color:#666;line-height:2.1;letter-spacing:.5px;
+    padding-left:18px;position:relative}
+  .pain li::before{content:"—";position:absolute;left:0;color:#b3ab99}
+  .pain b{font-weight:600;color:#444}
+
+  /* ---------- 细金线 + 把手 ---------- */
+  .cmp-line{position:absolute;top:0;bottom:0;left:var(--x);width:2px;z-index:3;
+    cursor:ew-resize;touch-action:none;
+    background:linear-gradient(180deg,rgba(200,164,92,0),rgba(200,164,92,.85) 18%,rgba(200,164,92,.85) 82%,rgba(200,164,92,0));
+    transition:left .7s cubic-bezier(.22,1,.36,1)}
+  .cmp-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:36px;height:36px;border-radius:50%;background:var(--white);
+    border:1.5px solid var(--gold);color:var(--gold-deep);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;line-height:1;cursor:ew-resize;user-select:none;
+    box-shadow:0 2px 14px rgba(0,0,0,.3)}
+
+  /* ---------- 底注 ---------- */
+  .hint{margin-top:18px;font-size:11px;letter-spacing:.2em;color:#a09784;text-align:center}
+  .veri{margin-top:26px;font-size:12px;letter-spacing:1px;color:#9a917f;text-align:center}
+  .veri b{color:#7a6f5c;font-weight:600}
+
+  @media(max-width:760px){
+    .cmp-after{padding:28px 24px}
+    .cmp-before{padding:28px 24px;position:relative;inset:auto;clip-path:none;
+      background:#f5f4f0;margin-bottom:12px;border-bottom:1px solid var(--line)}
+    .cmp-line{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="en">Reverse Tutor · Comparison</div>
+  <h1>同样是聊天，<em>反转过来</em>就不一样</h1>
+</div>
+
+<div class="cmp">
+  <!-- 底层：反转家教（铺满整卡宽，正常文档流，决定卡片高度） -->
+  <div class="cmp-after">
+    <div class="eyebrow">REVERSE TUTOR · 反转家教</div>
+    <p class="lead">AI 问，你来答——输出倒逼输入，知识盲区无法隐藏。</p>
+    <ul class="feat">
+      <li><b>费曼输出</b>——你来讲知识点，讲不清楚就是没真懂</li>
+      <li><b>案例追问</b>——AI 主动举反例，倒逼你自己发现知识错处</li>
+      <li><b>证据评分</b>——知识掌握度靠实际作答证据判断，不做空泛评估</li>
+      <li><b>记忆图谱</b>——为你搭建知识网络，错误原因可视化呈现</li>
+      <li><b>人物可调</b>——AI 的学生性格支持自定义，交互体验不重复</li>
+    </ul>
+  </div>
+
+  <!-- 顶层：普通AI聊天（absolute 铺满整卡宽，clip-path 从左往右揭示） -->
+  <div class="cmp-before">
+    <div class="eyebrow">NORMAL AI · 普通AI聊天</div>
+    <p class="core">你问，AI 答——被动接收，以为懂了。</p>
+    <ul class="pain">
+      <li><b>答案直给</b>——概念、公式、结论一并甩给你</li>
+      <li><b>虚假掌握</b>——看一眼觉得懂了，关上就忘</li>
+      <li><b>无反馈</b>——不知道自己哪里没懂</li>
+      <li><b>记忆浅</b>——三天后再遇到还是不会</li>
+    </ul>
+  </div>
+
+  <!-- 细金线 + 小圆把手 -->
+  <div class="cmp-line"><span class="cmp-handle">⇔</span></div>
+</div>
+
+<div class="hint">⇔ 拖动滑块，对比两种模式</div>
+<div class="veri"><b>费曼学习法验证</b>：输出式学习 · 反例暴露盲区 · 纠错强化记忆</div>
+
+<script>
+(function () {
+  var cardEl = document.querySelector('.cmp');
+  var lineEl = cardEl.querySelector('.cmp-line');
+  var dragging = false;
+
+  function setX(pct, animate) {
+    var v = Math.max(4, Math.min(96, pct));
+    cardEl.classList.toggle('cmp-drag', !animate);
+    cardEl.style.setProperty('--x', v + '%');
+  }
+  function fromEvent(e) {
+    var r = cardEl.getBoundingClientRect();
+    return (e.clientX - r.left) / r.width * 100;
+  }
+
+  lineEl.addEventListener('pointerdown', function (e) {
+    dragging = true; e.preventDefault();
+    if (lineEl.setPointerCapture) { try { lineEl.setPointerCapture(e.pointerId); } catch (_) {} }
+    setX(fromEvent(e), false);
+  });
+  lineEl.addEventListener('pointermove', function (e) { if (dragging) setX(fromEvent(e), false); });
+  var endDrag = function () { dragging = false; };
+  lineEl.addEventListener('pointerup', endDrag);
+  lineEl.addEventListener('pointercancel', endDrag);
+
+  // 点手柄（没拖动时）→ 平滑摆到另一态
+  cardEl.querySelector('.cmp-handle').addEventListener('click', function (e) {
+    e.stopPropagation();
+    var cur = parseFloat(cardEl.style.getPropertyValue('--x')) || 50;
+    setX(cur > 50 ? 6 : 76, true);
+  });
+
+  setX(50, false);
+})();
+</script>
+</body>
+</html>
