@@ -1,0 +1,10 @@
+{
+  "description": "Create stunning 3D interactive personal blogs and websites that captivate visitors with immersive designs and customizable content areas.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Serif+SC:wght@400;600;900&family=DM+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Instrument Serif', 'Noto Serif SC', serif;
+  --font-serif: 'Noto Serif SC', serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+}
+
+html, body, #root { height: 100%; }
+body { font-family: var(--font-serif); background: #0d0b14; overflow: hidden; }
+::selection { background: #f2b880; color: #1a1420; }
+.scroll-quiet { scrollbar-width: none; }
+.scroll-quiet::-webkit-scrollbar { display: none; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
