@@ -6,12 +6,16 @@ import IslandsScene from './scenes/E-浮空群岛/IslandsScene'
 import ArticlePanel from './components/ArticlePanel'
 import type { Article } from './data/articles'
 
-const concepts = [
+const allConcepts = [
   { key: 'islands', code: 'E', name: '漂浮群岛', en: 'Floating Isles', hint: '点击浮岛飞过去 · 书岛是文章入口 · 点空白处返回', tone: 'light' as const, Scene: IslandsScene },
   { key: 'room', code: 'A', name: '小房间', en: 'The Room', hint: '拖动旋转视角 · 点击书架上的书阅读文章', tone: 'light' as const, Scene: RoomScene },
   { key: 'planet', code: 'B', name: '小星球', en: 'Tiny Planet', hint: '拖动转动星球 · 找到红顶图书馆进入文章', tone: 'dark' as const, Scene: PlanetScene },
   { key: 'galaxy', code: 'C', name: '文章星系', en: 'Galaxy', hint: '每颗星是一篇文章 · 同色星座为同一主题', tone: 'dark' as const, Scene: GalaxyScene },
 ]
+
+// 独立打包时（VITE_THEME=islands 等）只保留对应主题，并隐藏底部切换栏
+const onlyTheme = import.meta.env.VITE_THEME as string | undefined
+const concepts = onlyTheme ? allConcepts.filter((k) => k.key === onlyTheme) : allConcepts
 
 export default function App() {
   const [idx, setIdx] = useState(0)
@@ -46,7 +50,7 @@ export default function App() {
       </button>
 
       {/* concept switcher */}
-      <nav className={`absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-1 rounded-full border p-1.5 backdrop-blur-xl ${light ? 'border-[#2b2118]/15 bg-[#fbf4e8]/70' : 'border-white/10 bg-white/5'}`}>
+      {concepts.length > 1 && <nav className={`absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-1 rounded-full border p-1.5 backdrop-blur-xl ${light ? 'border-[#2b2118]/15 bg-[#fbf4e8]/70' : 'border-white/10 bg-white/5'}`}>
         {concepts.map((k, i) => {
           const active = i === idx
           return (
@@ -62,11 +66,11 @@ export default function App() {
             </button>
           )
         })}
-      </nav>
+      </nav>}
 
-      <div className={`pointer-events-none absolute bottom-10 left-8 z-20 font-mono text-[11px] tracking-widest max-[900px]:hidden ${sub}`}>
+      {concepts.length > 1 && <div className={`pointer-events-none absolute bottom-10 left-8 z-20 font-mono text-[11px] tracking-widest max-[900px]:hidden ${sub}`}>
         MOCK 0{idx + 1} / 0{concepts.length}
-      </div>
+      </div>}
 
       <ArticlePanel
         open={panelOpen}
